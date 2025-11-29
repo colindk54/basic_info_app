@@ -1,6 +1,7 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_device_imei/flutter_device_imei.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 void main() {
@@ -37,13 +38,22 @@ class _HomeState extends State<Home> {
   List<ConnectivityResult>? connectivityResults;
   List<AppPermission>? permissions;
   AndroidDeviceInfo? deviceInfo;
+  String? imei;
 
   @override
   void initState() {
     super.initState();
+    _getImei();
     _getConnectivity();
     _getPermissions();
     _getDeviceInfo();
+  }
+
+  Future<void> _getImei() async {
+    imei = await FlutterDeviceImei.instance.getIMEI();
+    setState(() {
+
+    });
   }
 
   Future<void> _getDeviceInfo() async {
@@ -93,6 +103,7 @@ class _HomeState extends State<Home> {
       Text('Résolution : ${size.width.toInt()} x ${size.height.toInt()}'),
       Text('Orientation : ${orientation.name}'),
     ]);
+    if(imei != null) children.add(Text('IMEI : $imei'));
     if (connectivityResults != null) {
       children.add(
         Column(
@@ -115,7 +126,7 @@ class _HomeState extends State<Home> {
             Text('Permissions :'),
             ...permissions!
                 .map((AppPermission perm) => Text(perm.toString()))
-                .toList(),
+                ,
           ],
         ),
       );
